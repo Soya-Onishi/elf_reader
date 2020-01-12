@@ -1,4 +1,5 @@
 use std::fmt;
+use super::{make_u16, make_u32, make_u64};
 
 pub struct Header<T>
     where T: fmt::Display + fmt::Debug + fmt::LowerHex
@@ -22,7 +23,7 @@ pub struct Header<T>
 }
 
 impl<T> Header<T>
-    where T: fmt::Display + fmt::Debug + fmt::LowerHex
+    where T: fmt::Display + fmt::Debug + fmt::LowerHex + Copy
 {
     pub fn get_elf_class(binary: &Vec<u8>) -> Option<Class> {
         match binary[0x4] {
@@ -31,6 +32,18 @@ impl<T> Header<T>
             _ => return None,
         }
     }
+
+    pub fn is_little(&self) -> bool {
+        self.endian == Endian::Little
+    }
+
+    pub fn ph_offset(&self) -> T { self.program_header_offset }
+    pub fn sh_offset(&self) -> T { self.section_header_offset }
+    pub fn ph_size(&self) -> u16 { self.program_header_size }
+    pub fn ph_num(&self) -> u16 { self.program_header_number }
+    pub fn sh_size(&self) -> u16 { self.section_header_size }
+    pub fn sh_num(&self) -> u16 { self.section_header_number }
+    pub fn shstrndx(&self) -> u16 { self.section_name_table_entry }
 }
 
 impl Header<u32> {
@@ -299,33 +312,4 @@ impl ISA {
 
         Some(isa)
     }
-}
-
-fn make_u16(values: &[u8], is_little_endian: bool) -> u16 {
-    if is_little_endian {
-        (values[0] as u16) | ((values[1] as u16) << 8)
-    } else {
-        (values[1] as u16) | ((values[0] as u16) << 8)
-    }
-}
-
-fn make_u32(values: &[u8], is_little_endian: bool) -> u32 {
-    let (v0, v1, v2, v3) =
-        if is_little_endian {
-            (values[0], values[1], values[2], values[3])
-        } else {
-            (values[3], values[2], values[1], values[0])
-        };
-
-    (v0 as u32) | ((v1 as u32) << 8) | ((v2 as u32) << 16) | ((v3 as u32) << 24)
-}
-
-fn make_u64(values: &[u8], is_little_endian: bool) -> u64 {
-    let values =
-        if is_little_endian { values.to_vec() }
-        else { values.iter().rev().cloned().collect() };
-
-    values.iter().zip(0..).fold(0, |acc, (&v, index)| {
-        acc | ((v as u64) << (index * 8))
-    })
 }
