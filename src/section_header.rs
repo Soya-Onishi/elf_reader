@@ -45,7 +45,8 @@ impl<T> SectionHeader<T>
 
 impl SectionHeader<u32> {
     pub fn new(binary: &Vec<u8>, header: &Header<u32>) -> Option<Vec<SectionHeader<u32>>> {
-        Self::construct(binary, header, InnerSectionHeader::<u32>::new(binary, header)?)
+        let ih = InnerSectionHeader::<u32>::new(binary, header)?;
+        Self::construct(binary, header, ih)
     }
 }
 
@@ -246,11 +247,15 @@ pub enum SectionType {
     Group,
     SymTabSHNDX,
     Num,
-    Loos,
+    Loos(u32),
+    LoProc(u32),
+    LoUser(u32),
 }
 
 impl SectionType {
     pub fn new(value: u32) -> Option<SectionType> {
+        let range_check = |value: u32, base: u32| { value >= base && value < base + 0x1000_0000 };
+
         let sec_type = match value {
             0x0000_0000 => SectionType::Null,
             0x0000_0001 => SectionType::ProgBits,
@@ -270,10 +275,12 @@ impl SectionType {
             0x0000_0011 => SectionType::Group,
             0x0000_0012 => SectionType::SymTabSHNDX,
             0x0000_0013 => SectionType::Num,
-            0x6000_0000 => SectionType::Loos,
-            _           => return None,
+            value if range_check(value, 0x6000_0000) => SectionType::Loos(value - 0x6000_0000),
+            value if range_check(value, 0x7000_0000) => SectionType::LoProc(value - 0x7000_0000),
+            value if range_check(value, 0x8000_0000) => SectionType::LoUser(value - 0x8000_0000),
+            _           => { println!("error: 0x{:016x}", value); return None },
         };
-
+        println!("section type: {:?}", sec_type);
         Some(sec_type)
     }
 }
