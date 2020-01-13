@@ -1,11 +1,16 @@
+extern crate num;
+
 mod header;
 mod program_header;
+mod section_header;
 
 use std::fmt;
 use std::fs;
+use num::cast;
 
 pub use header::{Header, Class, get_elf_class};
 pub use program_header::ProgramHeader;
+use crate::section_header::SectionHeader;
 
 fn main() {
     let binary = read_binary("hello.out");
@@ -24,7 +29,8 @@ struct ELF<T>
     where T: fmt::Display + fmt::Debug + fmt::LowerHex + Copy
 {
     header: Header<T>,
-    program_headers: Vec<ProgramHeader<T>>
+    program_headers: Vec<ProgramHeader<T>>,
+    section_headers: Vec<SectionHeader<T>>,
 }
 
 impl ELF<u32>
@@ -32,10 +38,12 @@ impl ELF<u32>
     pub fn new(binary: &Vec<u8>) -> Option<ELF<u32>> {
         let header = Header::<u32>::new(binary)?;
         let program_headers = ProgramHeader::<u32>::new(binary, &header)?;
+        let section_headers = SectionHeader::<u32>::new(binary, &header)?;
 
         Some(ELF {
             header,
             program_headers,
+            section_headers,
         })
     }
 }
@@ -45,16 +53,18 @@ impl ELF<u64>
     pub fn new(binary: &Vec<u8>) -> Option<ELF<u64>> {
         let header = Header::<u64>::new(binary)?;
         let program_headers = ProgramHeader::<u64>::new(binary, &header)?;
+        let section_headers = SectionHeader::<u64>::new(binary, &header)?;
 
         Some(ELF {
             header,
             program_headers,
+            section_headers,
         })
     }
 }
 
 impl<T> fmt::Display for ELF<T>
-    where T: fmt::Display + fmt::Debug + fmt::LowerHex + Copy
+    where T: fmt::Display + fmt::Debug + fmt::LowerHex + Copy + cast::AsPrimitive<usize>
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let program_header_string =
@@ -73,7 +83,14 @@ impl<T> fmt::Display for ELF<T>
                 .collect::<Vec<String>>()
                 .join("\n");
 
-        write!(f, "{}\n\n{}", self.header, program_header_string)
+        let section_header_string =
+            self.section_headers
+                .iter()
+                .map(|sh| { format!("{}", sh)} )
+                .collect::<Vec<String>>()
+                .join("\n");
+
+        write!(f, "{}\n\n{}\n\n{}", self.header, program_header_string, section_header_string)
     }
 }
 
