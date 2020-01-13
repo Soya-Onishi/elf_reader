@@ -13,10 +13,16 @@ pub use program_header::ProgramHeader;
 use crate::section_header::SectionHeader;
 
 fn main() {
-    let binary = read_binary("hello.out");
+    let binary = read_binary("rv32ui-p-simple.out");
     match get_elf_class(&binary) {
         Some(Class::ELF64) => {
             match ELF::<u64>::new(binary) {
+                Some(elf) => println!("{}", elf),
+                None => println!("{}", "Something Error!"),
+            }
+        }
+        Some(Class::ELF32) => {
+            match ELF::<u32>::new(binary) {
                 Some(elf) => println!("{}", elf),
                 None => println!("{}", "Something Error!"),
             }
