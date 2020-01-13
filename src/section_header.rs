@@ -60,7 +60,11 @@ impl<T> fmt::Display for SectionHeader<T>
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let inner = self.inner.to_string();
-        let inner = inner.split("\n").collect::<Vec<&str>>().join("    \n");
+        let inner = inner
+            .split("\n")
+            .map(|line| { format!("    {}", line)})
+            .collect::<Vec<String>>()
+            .connect("\n");
 
         write!(f, "{}\n{}", self.name, inner)
     }
