@@ -278,9 +278,9 @@ impl SectionType {
             value if range_check(value, 0x6000_0000) => SectionType::Loos(value - 0x6000_0000),
             value if range_check(value, 0x7000_0000) => SectionType::LoProc(value - 0x7000_0000),
             value if range_check(value, 0x8000_0000) => SectionType::LoUser(value - 0x8000_0000),
-            _           => { println!("error: 0x{:016x}", value); return None },
+            _           => return None,
         };
-        println!("section type: {:?}", sec_type);
+
         Some(sec_type)
     }
 }

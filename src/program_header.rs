@@ -89,10 +89,6 @@ impl ProgramHeader<u64> {
                 (entry_point + 0x30..entry_point + 0x38),
             ];
 
-            for e in entry.iter() {
-                println!("0x{:08x}..0x{:08x}", e.start, e.end);
-            }
-
             let flags = make_u32(&binary[entry_point + 0x04..entry_point + 0x08], header.is_little());
 
             Self::construct(binary, header, flags, &entry, make_u64)
@@ -118,7 +114,6 @@ pub enum ProgramType {
 
 impl ProgramType {
     pub fn new(value: u32) -> Option<ProgramType> {
-        println!("0x{:08x}", value);
         let t = match value {
             0x0000_0000 => ProgramType::Null,
             0x0000_0001 => ProgramType::Load,
