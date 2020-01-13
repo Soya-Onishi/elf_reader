@@ -16,7 +16,7 @@ fn main() {
     let binary = read_binary("hello.out");
     match get_elf_class(&binary) {
         Some(Class::ELF64) => {
-            match ELF::<u64>::new(&binary) {
+            match ELF::<u64>::new(binary) {
                 Some(elf) => println!("{}", elf),
                 None => println!("{}", "Something Error!"),
             }
@@ -31,34 +31,37 @@ struct ELF<T>
     header: Header<T>,
     program_headers: Vec<ProgramHeader<T>>,
     section_headers: Vec<SectionHeader<T>>,
+    data: Vec<u8>,
 }
 
 impl ELF<u32>
 {
-    pub fn new(binary: &Vec<u8>) -> Option<ELF<u32>> {
-        let header = Header::<u32>::new(binary)?;
-        let program_headers = ProgramHeader::<u32>::new(binary, &header)?;
-        let section_headers = SectionHeader::<u32>::new(binary, &header)?;
+    pub fn new(binary: Vec<u8>) -> Option<ELF<u32>> {
+        let header = Header::<u32>::new(&binary)?;
+        let program_headers = ProgramHeader::<u32>::new(&binary, &header)?;
+        let section_headers = SectionHeader::<u32>::new(&binary, &header)?;
 
         Some(ELF {
             header,
             program_headers,
             section_headers,
+            data: binary,
         })
     }
 }
 
 impl ELF<u64>
 {
-    pub fn new(binary: &Vec<u8>) -> Option<ELF<u64>> {
-        let header = Header::<u64>::new(binary)?;
-        let program_headers = ProgramHeader::<u64>::new(binary, &header)?;
-        let section_headers = SectionHeader::<u64>::new(binary, &header)?;
+    pub fn new(binary: Vec<u8>) -> Option<ELF<u64>> {
+        let header = Header::<u64>::new(&binary)?;
+        let program_headers = ProgramHeader::<u64>::new(&binary, &header)?;
+        let section_headers = SectionHeader::<u64>::new(&binary, &header)?;
 
         Some(ELF {
             header,
             program_headers,
             section_headers,
+            data: binary,
         })
     }
 }
