@@ -205,7 +205,7 @@ impl<T> fmt::Display for InnerSectionHeader<T>
         let section_type = format!("Type:   {:?}\n", self.section_type);
         let flag         = format!("Flags:  {}\n", flag);
         let addr         = format!("Addr:   0x{:016x}\n", self.addr);
-        let offset       = format!("Offset: 0x{:016x}\n", self.addr);
+        let offset       = format!("Offset: 0x{:016x}\n", self.offset);
         let size         = format!("Size:   0x{:016x}\n", self.size);
         let link         = format!("Link:   {}\n", self.link);
         let info         = format!("Info:   {}\n", self.info);
