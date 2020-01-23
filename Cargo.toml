@@ -1,5 +1,5 @@
 [package]
-name = "my_objdump"
+name = "elf-reader"
 version = "0.1.0"
 authors = ["SoyaOhnishi <soya.ohnishi@gmail.com>"]
 edition = "2018"

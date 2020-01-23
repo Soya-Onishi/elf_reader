@@ -2,3 +2,5 @@
 **/*.rs.bk
 *.lock
 *.out
+
+.idea/
