@@ -1,6 +1,5 @@
 extern crate num;
 
-use std::fs;
 use std::fmt;
 use std::ops;
 
@@ -41,6 +40,17 @@ impl<T> SectionHeader<T>
             })
         }).collect::<Option<Vec<_>>>()
     }
+
+    pub fn name(&self) -> String { self.name.clone() }
+    pub fn section_type(&self) -> SectionType { self.inner.section_type }
+    pub fn flags(&self) -> T { self.inner.flags }
+    pub fn target_addr(&self) -> T { self.inner.addr }
+    pub fn file_offset(&self) -> T { self.inner.offset }
+    pub fn size(&self) -> T { self.inner.size }
+    pub fn link(&self) -> u32 { self.inner.link }
+    pub fn info(&self) -> u32 { self.inner.info }
+    pub fn addr_align(&self) -> T { self.inner.addr_align }
+    pub fn entry_size(&self) -> T { self.inner.entry_size }
 }
 
 impl SectionHeader<u32> {
@@ -74,15 +84,15 @@ impl<T> fmt::Display for SectionHeader<T>
 #[derive(Clone)]
 struct InnerSectionHeader<T> {
     name_offset: usize,
-    section_type: SectionType,
-    flags: T,
-    addr: T,
-    offset: T,
-    size: T,
-    link: u32,
-    info: u32,
-    addr_align: T,
-    entry_size: T,
+    pub section_type: SectionType,
+    pub flags: T,
+    pub addr: T,
+    pub offset: T,
+    pub size: T,
+    pub link: u32,
+    pub info: u32,
+    pub addr_align: T,
+    pub entry_size: T,
 
 }
 
