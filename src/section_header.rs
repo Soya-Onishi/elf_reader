@@ -237,7 +237,7 @@ impl<T> fmt::Display for InnerSectionHeader<T>
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum SectionType {
     Null,
     ProgBits,
