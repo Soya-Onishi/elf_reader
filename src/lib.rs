@@ -12,7 +12,7 @@ pub use header::{Header, Class};
 pub use program_header::ProgramHeader;
 pub use section_header::SectionHeader;
 
-struct ELF<T>
+pub struct ELF<T>
     where T: fmt::Display + fmt::Debug + fmt::LowerHex + Copy
 {
     header: Header<T>,
