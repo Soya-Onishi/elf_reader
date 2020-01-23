@@ -22,6 +22,7 @@ pub struct Header<T>
 }
 
 impl<T> Header<T>
+    where T: Copy
 {
     pub fn is_little(&self) -> bool {
         self.endian == Endian::Little
@@ -33,6 +34,7 @@ impl<T> Header<T>
     pub fn sh_num(&self) -> u16 { self.section_header_number }
     pub fn shstrndx(&self) -> u16 { self.section_name_table_entry }
 
+    pub fn entry_point(&self) -> T { self.entry_point }
 }
 
 pub fn get_elf_class(binary: &Vec<u8>) -> Option<Class> {
