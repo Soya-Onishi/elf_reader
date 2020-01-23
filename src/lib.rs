@@ -10,7 +10,7 @@ use num::cast;
 
 pub use header::{Header, Class};
 pub use program_header::ProgramHeader;
-pub use section_header::SectionHeader;
+pub use section_header::{SectionHeader, SectionType};
 
 pub struct ELF<T>
     where T: fmt::Display + fmt::Debug + fmt::LowerHex + Copy
