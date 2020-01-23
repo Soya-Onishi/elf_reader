@@ -21,6 +21,26 @@ pub struct ELF<T>
     data: Vec<u8>,
 }
 
+impl<T> ELF<T>
+    where T: fmt::Display + fmt::Debug + fmt::LowerHex + Copy
+{
+    pub fn header(&self) -> &Header<T> {
+        &self.header
+    }
+
+    pub fn program_headers(&self) -> &Vec<ProgramHeader<T>> {
+        &self.program_headers
+    }
+
+    pub fn section_headers(&self) -> &Vec<SectionHeader<T>> {
+        &self.section_headers
+    }
+
+    pub fn data(&self) -> &Vec<u8> {
+        &self.data
+    }
+}
+
 impl ELF<u32>
 {
     pub fn new(binary: Vec<u8>) -> Option<ELF<u32>> {
