@@ -8,28 +8,9 @@ use std::fmt;
 use std::fs;
 use num::cast;
 
-pub use header::{Header, Class, get_elf_class};
+pub use header::{Header, Class};
 pub use program_header::ProgramHeader;
-use crate::section_header::SectionHeader;
-
-fn main() {
-    let binary = read_binary("rv32ui-p-simple.out");
-    match get_elf_class(&binary) {
-        Some(Class::ELF64) => {
-            match ELF::<u64>::new(binary) {
-                Some(elf) => println!("{}", elf),
-                None => println!("{}", "Something Error!"),
-            }
-        }
-        Some(Class::ELF32) => {
-            match ELF::<u32>::new(binary) {
-                Some(elf) => println!("{}", elf),
-                None => println!("{}", "Something Error!"),
-            }
-        }
-        _ => (),
-    }
-}
+pub use section_header::SectionHeader;
 
 struct ELF<T>
     where T: fmt::Display + fmt::Debug + fmt::LowerHex + Copy
